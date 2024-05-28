@@ -6,35 +6,37 @@ const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
 
 const GlobalProvider = ({ children }) => {
-    const [isLoggedIn, setisLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
-    const [isLoading, setisLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-      getCurrentUser()
-        .then((res) => {
-            if(res) {
-                setisLoggedIn(true);
-                setUser(res);
-            } else {
-                setisLoggedIn(false);
-                setUser(null);
+        const fetchCurrentUser = async () => {
+            setIsLoading(true);
+            try {
+                const res = await getCurrentUser();
+                if (res) {
+                    setIsLoggedIn(true);
+                    setUser(res);
+                } else {
+                    setIsLoggedIn(false);
+                    setUser(null);
+                }
+            } catch (error) {
+                console.error(error.message);
+            } finally {
+                setIsLoading(false);
             }
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-        .finally(() => {
-            setisLoading(false);
-        }
-        );
+        };
+
+        fetchCurrentUser();
     }, []);
     
 
     return (
         <GlobalContext.Provider value={{
             isLoggedIn,
-            setisLoggedIn,
+            setIsLoggedIn,
             user,
             setUser,
             isLoading

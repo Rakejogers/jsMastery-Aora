@@ -10,6 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 *.code-workspace
+%ProgramData%
 
 # macOS
 .DS_Store
