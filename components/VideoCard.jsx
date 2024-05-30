@@ -5,6 +5,24 @@ import { Video, ResizeMode } from 'expo-av'
 
 const VideoCard = ({ video: {title, thumbnail, video, creator: {username, avatar}}}) => {
     const [play, setPlay] = useState(false)
+
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            if (play) {
+                videoRef.current.playAsync();
+            } else {
+                videoRef.current.stopAsync();
+            }
+        }
+    }, [play]);
+
+    const handlePlaybackStatusUpdate = (status) => {
+        if (status.didJustFinish) {
+            setPlay(false);
+        }
+    };
     
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -25,15 +43,24 @@ const VideoCard = ({ video: {title, thumbnail, video, creator: {username, avatar
             </View>
         </View>
         {play ? (
+            //   <Video
+            //       source={{ uri: video }}
+            //       className="w-full h-60 rounded-xl mt-3"
+            //       resizeMode={ResizeMode.CONTAIN}
+            //       useNativeControls
+            //       shouldPlay
+            //       onPlaybackStatusUpdate={(status) => {
+            //           if (!status.didJustFinish) setPlay(false)
+            //       }}
+            //   />
               <Video
+                  ref={videoRef}
                   source={{ uri: video }}
                   className="w-full h-60 rounded-xl mt-3"
                   resizeMode={ResizeMode.CONTAIN}
                   useNativeControls
                   shouldPlay
-                  onPlaybackStatusUpdate={(status) => {
-                      if (!status.didJustFinish) setPlay(false)
-                  }}
+                  onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
               />
         ) : (
             <TouchableOpacity 
