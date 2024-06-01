@@ -2,10 +2,13 @@ import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { icons } from '../constants'
 import { Video, ResizeMode } from 'expo-av'
+import { likeVideo } from '../lib/appwrite'
+import { useGlobalContext } from '../context/GlobalProvider'
 
-const VideoCard = ({ video: {title, thumbnail, video, creator: {username, avatar}}}) => {
+const VideoCard = ({ video: {title, thumbnail, video, liked, creator: {username, avatar}}}) => {
+    const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
-
+    const [isLiked, setIsLiked] = useState(liked.some(item => item.$id === user.$id))
     const videoRef = useRef(null);
 
     useEffect(() => {
@@ -23,6 +26,27 @@ const VideoCard = ({ video: {title, thumbnail, video, creator: {username, avatar
             setPlay(false);
         }
     };
+
+    const like = () => {
+        try {
+            likeVideo(user, video, true)
+            //console.log('Liked')
+            setIsLiked(true)
+        } catch (error) {
+            throw new Error('Error while liking', error)
+        }
+    }
+
+    const unlike = () => {
+        try {
+            likeVideo(user, video, false)
+            //console.log("unliked")
+            setIsLiked(false)
+        } catch (error) {
+            throw new Error('Error while liking', error)
+        }
+    }
+
     
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -37,22 +61,16 @@ const VideoCard = ({ video: {title, thumbnail, video, creator: {username, avatar
                 </View>
             </View>
             <View className="pt-2 flex-row">
-                <TouchableOpacity>
-                      <Image source={icons.bookmark} className="w-5 h-5" resizeMode='contain' />
+                <TouchableOpacity
+                    //like on press if isLiked==true otherwise unlike
+                    onPress={isLiked ? unlike : like}
+                >
+                      <Image source={icons.bookmark} className="w-5 h-5" resizeMode='contain' tintColor={isLiked ? '#FF9C01' : '#CDCDE0'}
+                      />
                 </TouchableOpacity>
             </View>
         </View>
         {play ? (
-            //   <Video
-            //       source={{ uri: video }}
-            //       className="w-full h-60 rounded-xl mt-3"
-            //       resizeMode={ResizeMode.CONTAIN}
-            //       useNativeControls
-            //       shouldPlay
-            //       onPlaybackStatusUpdate={(status) => {
-            //           if (!status.didJustFinish) setPlay(false)
-            //       }}
-            //   />
               <Video
                   ref={videoRef}
                   source={{ uri: video }}
