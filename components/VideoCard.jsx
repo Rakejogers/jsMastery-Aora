@@ -5,11 +5,13 @@ import { Video, ResizeMode } from 'expo-av'
 import { likeVideo } from '../lib/appwrite'
 import { useGlobalContext } from '../context/GlobalProvider'
 
-const VideoCard = ({ video: {title, thumbnail, video, liked, creator: {username, avatar}}}) => {
+const VideoCard = ({ video: {title, thumbnail, video, likedIds, creator: {username, avatar}} , itemId: videoId}) => {
     const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
-    const [isLiked, setIsLiked] = useState(liked.some(item => item.$id === user.$id))
+    const [isLiked, setIsLiked] = useState(likedIds.some(item => item.$id === user.$id))
     const videoRef = useRef(null);
+
+    console.log("ID", videoId)
 
     useEffect(() => {
         if (videoRef.current) {
@@ -29,8 +31,7 @@ const VideoCard = ({ video: {title, thumbnail, video, liked, creator: {username,
 
     const like = () => {
         try {
-            likeVideo(user, video, true)
-            //console.log('Liked')
+            likeVideo(user.$id, videoId, true)
             setIsLiked(true)
         } catch (error) {
             throw new Error('Error while liking', error)
@@ -39,8 +40,7 @@ const VideoCard = ({ video: {title, thumbnail, video, liked, creator: {username,
 
     const unlike = () => {
         try {
-            likeVideo(user, video, false)
-            //console.log("unliked")
+            likeVideo(user.$id, videoId, false)
             setIsLiked(false)
         } catch (error) {
             throw new Error('Error while liking', error)
