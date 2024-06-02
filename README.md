@@ -49,3 +49,6 @@ We welcome contributions! Please follow these steps to contribute:
 ## Contact Information
 
 For questions or support, please contact jarog2005@gmail.com.
+
+## Credits
+Credits to JsMastery on youtube for the fantastic tutorial
