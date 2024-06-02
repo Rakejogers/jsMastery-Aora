@@ -92,6 +92,7 @@ const Trending = ({posts}) => {
         }}
         contentOffset={{x:170}}
         onViewableItemsChanged={viewableItemsChanges}
+        showsHorizontalScrollIndicator={false}
     />
   )
 }

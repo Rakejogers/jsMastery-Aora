@@ -9,8 +9,10 @@ import { searchPosts } from '../../lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite'
 import VideoCard from '../../components/VideoCard'
 import { useLocalSearchParams } from 'expo-router'
+import { useGlobalContext } from '../../context/GlobalProvider'
 
 const Search = () => {
+  const { user } = useGlobalContext();
   const { query } = useLocalSearchParams();
   const { data: posts, refetch } = useAppwrite(() => searchPosts(query));
 
@@ -24,7 +26,7 @@ const Search = () => {
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => (
-          <VideoCard video={item} />
+          <VideoCard video={item} itemId={item.$id} userId={user.$id}/>
         )}
         ListHeaderComponent={
           <View className="my-6 px-4">

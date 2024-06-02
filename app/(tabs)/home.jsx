@@ -38,7 +38,7 @@ const Home = () => {
         data={posts}
         keyExtractor={(item) => item.$id}
         renderItem={( {item} ) => (
-          <VideoCard video={item} itemId={item.$id}/>
+          <VideoCard video={item} itemId={item.$id} userId = {user.$id}/>
         )}
         ListHeaderComponent={
           <View className="my-6 px-4 space-y-6">
@@ -70,6 +70,7 @@ const Home = () => {
           />
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
+        showsVerticalScrollIndicator={false}
       />
       <StatusBar backgroundColor='#161622' style='dark'/>
     </SafeAreaView>
