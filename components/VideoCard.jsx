@@ -2,14 +2,14 @@ import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { icons } from '../constants'
 import { Video, ResizeMode } from 'expo-av'
-import { likeVideo } from '../lib/appwrite'
-import { useGlobalContext } from '../context/GlobalProvider'
+import { deleteVideo, likeVideo } from '../lib/appwrite'
 
-const VideoCard = ({ video: {title, thumbnail, video, likedIds, creator: {username, avatar}} , itemId: videoId, userId: $id}) => {
+const VideoCard = ({ video: {title, thumbnail, video, likedIds, creator: {username, avatar}} , itemId: videoId, userId: $id, refreshfn: refresh}) => {
     // const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
     const [isLiked, setIsLiked] = useState(likedIds.includes($id))
     const videoRef = useRef(null);
+    const [isPressed, setIsPressed] = useState(false)
     
 
     useEffect(() => {
@@ -46,6 +46,19 @@ const VideoCard = ({ video: {title, thumbnail, video, likedIds, creator: {userna
         }
     }
 
+    const deletePost =  async () => {
+        try {
+            setIsPressed(true);
+            await deleteVideo(video, thumbnail, videoId);
+            refresh();
+        } catch (error) {
+            console.log(error)
+            throw new Error(error);
+        } finally {
+            setIsPressed(false);
+        }
+    }
+
     
   return (
     <View className="flex-col items-center px-4 mb-14">
@@ -66,6 +79,12 @@ const VideoCard = ({ video: {title, thumbnail, video, likedIds, creator: {userna
                 >
                       <Image source={icons.bookmark} className="w-5 h-5" resizeMode='contain' tintColor={isLiked ? '#FF9C01' : '#CDCDE0'}
                       />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={deletePost}
+                >
+                      <Image source={icons.trash} className="w-5 h-5 px-6" resizeMode='contain' tintColor={isPressed ? '#FF5B5B' : '#CDCDE0'}
+                    />
                 </TouchableOpacity>
             </View>
         </View>
